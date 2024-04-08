@@ -10,7 +10,7 @@ export const getPlayers = async (req, res) => {
 			available,
 			domain,
 		} = req.query;
-		const skip = (page * 1 - 1) * limit;
+		let skip = (page * 1 - 1) * limit;
 
 		const query = {};
 
@@ -34,6 +34,10 @@ export const getPlayers = async (req, res) => {
 
 		const totalUsersCount = await userDto.countDocuments(query);
 		const totalPages = Math.ceil(totalUsersCount / limit);
+		
+		if (totalUsersCount < limit) {
+			skip = 0;
+		}
 
 		const users = await userDto.find(query).skip(skip).limit(limit);
 
